@@ -1,42 +1,724 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#080d19"><title>Space Fidget — Pocket Observatory</title><style>
-:root{--accent:#83f5db;--ink:#dce8f5;--muted:#8291ac}*{box-sizing:border-box}body{margin:0;background:#080d19;color:var(--ink);font:14px system-ui,-apple-system,sans-serif;min-height:100dvh}button,input{font:inherit}button{color:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:3px}header{display:flex;justify-content:space-between;align-items:center;padding:18px 22px 12px;max-width:1000px;margin:auto}h1{font-size:21px;letter-spacing:-.6px;margin:0}h1 span{color:var(--accent)}.eyebrow{font-size:10px;letter-spacing:2px;color:var(--muted);margin-bottom:5px}.smallbtn{border:1px solid #29344a;border-radius:22px;background:#131b2c;padding:9px 13px}.smallbtn.on{color:var(--accent);border-color:var(--accent)}main{max-width:1000px;margin:auto;padding:0 18px 20px}.tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin:10px 0 12px}.tab{padding:12px 4px;background:#111827;border:1px solid #243047;border-radius:13px;font-size:13px}.tab.active{background:#163330;border-color:var(--accent);color:var(--accent)}.stage{height:clamp(320px,53dvh,570px);position:relative;border:1px solid #27334b;border-radius:24px;overflow:hidden;background:#050914;box-shadow:0 18px 60px #0005}canvas{width:100%;height:100%;display:block;touch-action:none;cursor:crosshair}.stagehead{position:absolute;top:17px;left:19px;pointer-events:none}.stagehead strong{font-size:18px;font-weight:600}.stagehead p{font-size:12px;color:#9aaac3;margin:6px 0}.stage .badge{position:absolute;right:15px;top:17px;color:var(--accent);font-size:10px;letter-spacing:2px;pointer-events:none}.stagefoot{position:absolute;bottom:15px;left:18px;right:18px;display:flex;align-items:center;justify-content:space-between;pointer-events:none}.stagefoot span{font-size:11px;letter-spacing:1px;color:#8897af}.stagefoot button{pointer-events:auto;background:#132136bb;backdrop-filter:blur(8px);border:1px solid #41516a;border-radius:20px;padding:8px 15px}.toolbar{display:flex;gap:20px;align-items:center;flex-wrap:wrap;padding:15px 3px}.label{color:var(--muted);font-size:11px;letter-spacing:1px}.colors{display:flex;gap:9px;align-items:center}.color{width:25px;height:25px;border-radius:50%;border:3px solid #080d19;outline:1px solid #29344a;background:var(--c)}.color.active{outline:2px solid white}.speed{display:flex;align-items:center;gap:10px;flex:1;min-width:160px}input[type=range]{accent-color:var(--accent);width:100%;max-width:200px}.pads{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}.pad{height:69px;border-radius:15px;border:1px solid #34415c;border-bottom:5px solid #27334a;background:linear-gradient(155deg,#23314a,#121b2a);box-shadow:0 6px 13px #0004;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;touch-action:manipulation;transition:background .12s,transform .12s}.pad b{color:var(--accent);font-size:17px}.pad span{font-size:10px;color:#a7b4c9;letter-spacing:1.5px}.pad:active,.pad.lit{transform:translateY(3px);border-bottom-width:2px;background:#254f52}.footer{display:flex;justify-content:space-between;color:#61728d;font-size:11px;padding:14px 2px 0}.footer button{border:0;color:#8ea2bf;background:none;padding:0}.help{display:none;margin:12px 0 0;color:#a3b1c7;line-height:1.6;background:#131c2c;padding:14px;border-radius:14px}.help.show{display:block}@media(max-width:480px){header{padding:15px 16px 7px}main{padding:0 12px 15px}.tab{font-size:11px;padding:12px 2px}.toolbar{gap:12px}.stagehead strong{font-size:16px}.stage .badge{font-size:9px}.footer{font-size:10px}}@media(prefers-reduced-motion:reduce){.pad{transition:none}}
-</style></head><body>
-<header><div><div class="eyebrow">POCKET OBSERVATORY</div><h1>Space <span>Fidget</span></h1></div><button id="sound" class="smallbtn" aria-pressed="false">Sound off</button></header>
-<main><nav class="tabs" aria-label="Fidget modes"><button class="tab active" data-mode="stars" aria-pressed="true">✦ Magnetic stars</button><button class="tab" data-mode="fluid" aria-pressed="false">≈ Nebula fluid</button><button class="tab" data-mode="gears" aria-pressed="false">⚙ Orbit gears</button><button class="tab" data-mode="bubbles" aria-pressed="false">◉ Cosmic pops</button></nav>
-<section class="stage"><canvas id="scene" aria-label="Interactive space fidget. Drag magnetic stars, paint a nebula, spin gears, or pop bubbles."></canvas><div class="stagehead"><strong id="title">Gather a constellation</strong><p id="hint">Touch and drag to pull the stars.</p></div><div class="badge" id="badge">ATTRACT</div><div class="stagefoot"><span id="status">NO GOAL. JUST PLAY.</span><button id="action">Repel ⇄</button></div></section>
-<div class="toolbar"><div class="colors"><span class="label">GLOW</span><button class="color active" style="--c:#83f5db" data-color="0" aria-label="Mint glow"></button><button class="color" style="--c:#b3a0ff" data-color="1" aria-label="Violet glow"></button><button class="color" style="--c:#ff9bb7" data-color="2" aria-label="Rose glow"></button><button class="color" style="--c:#ffc779" data-color="3" aria-label="Amber glow"></button></div><label class="speed"><span class="label">SPEED</span><input id="speed" type="range" min="0.2" max="2" step="0.1" value="1" aria-label="Animation speed"></label><button id="pause" class="smallbtn" aria-pressed="false">Pause</button></div>
-<div class="pads" aria-label="Sound and light buttons"><button class="pad" data-note="0"><b>◈</b><span>DEEP</span></button><button class="pad" data-note="1"><b>✧</b><span>CHIME</span></button><button class="pad" data-note="2"><b>⌁</b><span>PULSE</span></button><button class="pad" data-note="3"><b>⊙</b><span>CLICK</span></button></div><div class="footer"><span>OFFLINE • TOUCH + MOUSE</span><button id="helpbtn" aria-expanded="false">How to play</button></div><div class="help" id="help">Drag in the window to play. Magnetic stars pull toward you; use Repel to push them away. Paint glowing trails in Nebula fluid. Drag around the center of a gear to spin it, then release. Tap Cosmic pops to pop bubbles; they refill automatically. The four pads send light ripples through every mode. Turn sound on for synthesized tones. Colors, speed, and sound preference save automatically when browser storage is available.</div></main>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#070b16">
+<title>Space Fidget — Pocket Observatory</title>
+<style>
+:root{
+  --accent:#83f5db;
+  --ink:#e7eef8;
+  --muted:#8b9bb6;
+  --line:#2a3852;
+  --panel:#101826ee;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  background:
+    radial-gradient(900px 480px at 80% -10%, #16304a55, transparent 60%),
+    radial-gradient(700px 420px at -10% 110%, #2a184855, transparent 55%),
+    #070b16;
+  color:var(--ink);
+  font:14px/1.4 ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif;
+  min-height:100dvh;
+}
+button,input{font:inherit}
+button{color:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
+button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+header{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:16px 20px 8px;max-width:1040px;margin:auto;
+}
+h1{font-size:22px;letter-spacing:-.7px;margin:0;font-weight:650}
+h1 span{color:var(--accent)}
+.eyebrow{font-size:10px;letter-spacing:2.4px;color:var(--muted);margin-bottom:4px}
+.smallbtn{
+  border:1px solid var(--line);border-radius:999px;background:#131c2c;
+  padding:9px 13px;
+}
+.smallbtn.on{color:var(--accent);border-color:color-mix(in srgb, var(--accent) 70%, #243)}
+main{max-width:1040px;margin:auto;padding:0 16px 22px}
+.tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin:10px 0 12px}
+.tab{
+  padding:11px 4px;background:#101827;border:1px solid #243047;border-radius:13px;
+  font-size:12.5px;color:#c5d2e6;
+}
+.tab.active{background:#14332f;border-color:var(--accent);color:var(--accent)}
+.stage{
+  height:clamp(340px,56dvh,600px);position:relative;
+  border:1px solid #27344c;border-radius:26px;overflow:hidden;
+  background:#040814;
+  box-shadow:0 22px 70px #0007, inset 0 0 80px #83f5db08;
+}
+canvas{width:100%;height:100%;display:block;touch-action:none;cursor:crosshair}
+.stagehead{position:absolute;top:16px;left:18px;pointer-events:none;text-shadow:0 2px 12px #000}
+.stagehead strong{font-size:18px;font-weight:620}
+.stagehead p{font-size:12px;color:#b7c5d8;margin:5px 0 0}
+.badge{
+  position:absolute;right:14px;top:16px;color:var(--accent);
+  font-size:10px;letter-spacing:2px;pointer-events:none;
+  background:#0b1424aa;border:1px solid #2c3d58;border-radius:999px;padding:6px 9px;
+}
+.stagefoot{
+  position:absolute;bottom:14px;left:16px;right:16px;
+  display:flex;align-items:center;justify-content:space-between;pointer-events:none;gap:10px;
+}
+.stagefoot span{font-size:11px;letter-spacing:1.2px;color:#93a4bd}
+.stagefoot button{
+  pointer-events:auto;background:#101b2ccc;backdrop-filter:blur(10px);
+  border:1px solid #44556f;border-radius:999px;padding:8px 14px;
+}
+.toolbar{display:flex;gap:16px;align-items:center;flex-wrap:wrap;padding:14px 2px 4px}
+.label{color:var(--muted);font-size:11px;letter-spacing:1.2px}
+.colors{display:flex;gap:9px;align-items:center}
+.color{
+  width:26px;height:26px;border-radius:50%;border:3px solid #070b16;
+  outline:1px solid #31425e;background:var(--c);
+}
+.color.active{outline:2px solid #fff;box-shadow:0 0 0 3px color-mix(in srgb, var(--c) 45%, transparent)}
+.speed{display:flex;align-items:center;gap:10px;flex:1;min-width:170px}
+input[type=range]{accent-color:var(--accent);width:100%;max-width:220px}
+.pads{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-top:10px}
+.pad{
+  height:72px;border-radius:16px;border:1px solid #364864;border-bottom:5px solid #243246;
+  background:linear-gradient(160deg,#24344d,#101826);
+  box-shadow:0 8px 16px #0005;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
+  touch-action:manipulation;transition:transform .12s, background .12s, border-color .12s;
+}
+.pad b{color:var(--accent);font-size:18px}
+.pad span{font-size:10px;color:#b0bed2;letter-spacing:1.6px}
+.pad:active,.pad.lit{
+  transform:translateY(3px);border-bottom-width:2px;
+  background:#1d4d4f;border-color:var(--accent);
+}
+.footer{display:flex;justify-content:space-between;color:#6d809b;font-size:11px;padding:14px 2px 0}
+.footer button{border:0;color:#95a8c4;background:none;padding:0}
+.help{display:none;margin:12px 0 0;color:#aebcd2;line-height:1.55;background:#121b2b;padding:14px 15px;border-radius:14px;border:1px solid #243049}
+.help.show{display:block}
+@media(max-width:560px){
+  header{padding:14px 14px 6px}
+  main{padding:0 10px 16px}
+  .tab{font-size:11px;padding:11px 2px}
+  .stagehead strong{font-size:16px}
+  .badge{font-size:9px;letter-spacing:1.2px}
+}
+@media(prefers-reduced-motion:reduce){
+  .pad{transition:none}
+}
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <div class="eyebrow">POCKET OBSERVATORY</div>
+    <h1>Space <span>Fidget</span></h1>
+  </div>
+  <button id="sound" class="smallbtn" aria-pressed="false">Sound off</button>
+</header>
+<main>
+  <nav class="tabs" aria-label="Fidget modes">
+    <button class="tab active" data-mode="stars" aria-pressed="true">✦ Stars</button>
+    <button class="tab" data-mode="fluid" aria-pressed="false">≈ Nebula</button>
+    <button class="tab" data-mode="gears" aria-pressed="false">⚙ Gears</button>
+    <button class="tab" data-mode="bubbles" aria-pressed="false">◉ Pops</button>
+  </nav>
+  <section class="stage">
+    <canvas id="scene" aria-label="Interactive space fidget. Drag magnetic stars, paint a nebula, spin gears, or pop bubbles."></canvas>
+    <div class="stagehead">
+      <strong id="title">Gather a constellation</strong>
+      <p id="hint">Touch and drag. Nearby stars link into lines.</p>
+    </div>
+    <div class="badge" id="badge">ATTRACT</div>
+    <div class="stagefoot">
+      <span id="status">NO GOAL. JUST PLAY.</span>
+      <button id="action">Repel ⇄</button>
+    </div>
+  </section>
+  <div class="toolbar">
+    <div class="colors">
+      <span class="label">GLOW</span>
+      <button class="color active" style="--c:#83f5db" data-color="0" aria-label="Mint glow"></button>
+      <button class="color" style="--c:#b3a0ff" data-color="1" aria-label="Violet glow"></button>
+      <button class="color" style="--c:#ff9bb7" data-color="2" aria-label="Rose glow"></button>
+      <button class="color" style="--c:#ffc779" data-color="3" aria-label="Amber glow"></button>
+    </div>
+    <label class="speed"><span class="label">SPEED</span><input id="speed" type="range" min="0.2" max="2" step="0.1" value="1" aria-label="Animation speed"></label>
+    <button id="pause" class="smallbtn" aria-pressed="false">Pause</button>
+  </div>
+  <div class="pads" aria-label="Sound and light buttons">
+    <button class="pad" data-note="0"><b>◈</b><span>DEEP</span></button>
+    <button class="pad" data-note="1"><b>✧</b><span>CHIME</span></button>
+    <button class="pad" data-note="2"><b>⌁</b><span>PULSE</span></button>
+    <button class="pad" data-note="3"><b>⊙</b><span>CLICK</span></button>
+  </div>
+  <div class="footer">
+    <span>OFFLINE • TOUCH + MOUSE</span>
+    <button id="helpbtn" aria-expanded="false">How to play</button>
+  </div>
+  <div class="help" id="help">
+    Drag in the window. Magnetic stars curl toward your finger and draw constellation lines when they pass close; Repel pushes them into a spray. Nebula paints soft glowing ink that drifts on its own. Orbit gears mesh — drag around a gear to wind it, then let go, or switch on Auto spin. Cosmic pops burst into sparkles and grow back. The four pads throw light ripples and a tone through every mode. Glow, speed, sound, and the last mode save in this browser.
+  </div>
+</main>
 <script>
 'use strict';
-const $=s=>document.querySelector(s),canvas=$('#scene'),ctx=canvas.getContext('2d');
-const palettes=[[131,245,219],[179,160,255],[255,155,183],[255,199,121]];
-let prefs={color:0,speed:1,sound:false};try{Object.assign(prefs,JSON.parse(localStorage.getItem('space-fidget-v1')||'{}'))}catch(e){}prefs.color=Number.isInteger(prefs.color)&&prefs.color>=0&&prefs.color<4?prefs.color:0;prefs.speed=Math.min(2,Math.max(.2,+prefs.speed||1));prefs.sound=!!prefs.sound;
-let mode='stars',w=600,h=400,dpr=1,paused=false,repel=false,time=0,last=0,stars=[],dust=[],trails=[],ripples=[],bubbles=[],gears=[],spin=.005,pops=0,auto=false,audio=null,dragGear=null,previousAngle=0;
-const pointers=new Map();const rand=(a,b)=>a+Math.random()*(b-a);const rgba=(a=1,offset=0)=>{const c=palettes[(prefs.color+offset)%4];return `rgba(${c[0]},${c[1]},${c[2]},${a})`};
-function save(){try{localStorage.setItem('space-fidget-v1',JSON.stringify(prefs))}catch(e){}}
-function updatePrefs(){document.documentElement.style.setProperty('--accent',rgba());$('#sound').textContent=prefs.sound?'Sound on':'Sound off';$('#sound').classList.toggle('on',prefs.sound);$('#sound').setAttribute('aria-pressed',prefs.sound);$('#speed').value=prefs.speed;document.querySelectorAll('.color').forEach(b=>b.classList.toggle('active',+b.dataset.color===prefs.color))}updatePrefs();
-function tone(kind=1){if(!prefs.sound)return;try{if(!audio)audio=new (window.AudioContext||window.webkitAudioContext)();if(audio.state==='suspended')audio.resume();const now=audio.currentTime,o=audio.createOscillator(),g=audio.createGain();o.connect(g);g.connect(audio.destination);o.type=kind===3?'triangle':'sine';let f=[80,523.25,220,1250][kind];o.frequency.setValueAtTime(f,now);o.frequency.exponentialRampToValueAtTime(kind===0?36:kind===3?140:f*.75,now+.22);g.gain.setValueAtTime(.0001,now);g.gain.exponentialRampToValueAtTime(.16,now+.008);g.gain.exponentialRampToValueAtTime(.0001,now+(kind===1?.8:.28));o.start(now);o.stop(now+.85)}catch(e){}}
-function ripple(x,y,power=1){ripples.push({x,y,r:3,a:1,power});if(ripples.length>30)ripples.shift()}
-function initialize(){dust=Array.from({length:65},()=>({x:Math.random()*w,y:Math.random()*h,r:rand(.4,1.3),a:rand(.1,.5)}));stars=Array.from({length:240},()=>({x:Math.random()*w,y:Math.random()*h,vx:rand(-.3,.3),vy:rand(-.3,.3),r:rand(.8,2.3)}));gears=[{x:w*.5,y:h*.52,r:Math.min(w*.2,h*.22),n:20,a:0},{x:w*.5-Math.min(w*.2,h*.22)*1.54,y:h*.52+20,r:Math.min(w*.2,h*.22)*.55,n:11,a:0},{x:w*.5+Math.min(w*.2,h*.22)*1.54,y:h*.52-20,r:Math.min(w*.2,h*.22)*.55,n:11,a:0}];refill();trails=[];ripples=[]}
-function refill(){bubbles=[];let gap=w<500?48:58;let cols=Math.max(3,Math.floor((w-35)/gap)),rows=Math.max(2,Math.floor((h-130)/gap));for(let j=0;j<rows;j++)for(let i=0;i<cols;i++)bubbles.push({x:(w-(cols-1)*gap)/2+i*gap,y:95+j*gap,r:gap*.36,popped:false,regrow:0,scale:1});pops=0}
-function resize(){const r=canvas.getBoundingClientRect();w=r.width;h=r.height;dpr=Math.min(2,window.devicePixelRatio||1);canvas.width=Math.round(w*dpr);canvas.height=Math.round(h*dpr);ctx.setTransform(dpr,0,0,dpr,0,0);initialize();render(0)}new ResizeObserver(resize).observe(canvas);
-const descriptions={stars:['Gather a constellation','Touch and drag to pull the stars.','Repel ⇄'],fluid:['Pour a little universe','Drag slowly. Let the colors flow.','Clear trails'],gears:['Spin the orbit engine','Drag around any gear, then release.','Auto spin'],bubbles:['A pocket of tiny planets','Tap or sweep to pop. They grow back.','Refill']};
-function switchMode(next){mode=next;pointers.clear();dragGear=null;const d=descriptions[mode];$('#title').textContent=d[0];$('#hint').textContent=d[1];$('#action').textContent=mode==='gears'&&auto?'Free spin':d[2];$('#status').textContent='NO GOAL. JUST PLAY.';document.querySelectorAll('.tab').forEach(b=>{let selected=b.dataset.mode===mode;b.classList.toggle('active',selected);b.setAttribute('aria-pressed',selected)});updateBadge();render(0)}
-function updateBadge(){$('#badge').textContent=mode==='stars'?(repel?'REPEL':'ATTRACT'):mode==='fluid'?'FLOW':mode==='gears'?(auto?'AUTO':'FREE SPIN'):'POP & REFILL'}
-function fluidAt(x,y,dx=0,dy=0){for(let i=0;i<7;i++)trails.push({x:x+rand(-7,7),y:y+rand(-7,7),vx:dx*.06+rand(-.7,.7),vy:dy*.06+rand(-.7,.7),r:rand(8,23),life:1,c:Math.random()>.6?1:0});if(trails.length>800)trails.splice(0,trails.length-800)}
-function popAt(x,y){let hit=false;for(const b of bubbles)if(!b.popped&&Math.hypot(x-b.x,y-b.y)<b.r+7){b.popped=true;b.regrow=2.5;b.scale=0;ripple(b.x,b.y,.4);pops++;hit=true}if(hit){tone(3);$('#status').textContent=pops+' LITTLE PLANETS POPPED'}}
-canvas.addEventListener('pointerdown',e=>{e.preventDefault();canvas.setPointerCapture(e.pointerId);const r=canvas.getBoundingClientRect(),p={x:e.clientX-r.left,y:e.clientY-r.top};pointers.set(e.pointerId,p);if(mode==='bubbles')popAt(p.x,p.y);else if(mode==='fluid')fluidAt(p.x,p.y);else if(mode==='gears'){dragGear=gears.find(g=>Math.hypot(p.x-g.x,p.y-g.y)<g.r+20)||gears[0];previousAngle=Math.atan2(p.y-dragGear.y,p.x-dragGear.x);auto=false;updateBadge()}else ripple(p.x,p.y,.4)});
-canvas.addEventListener('pointermove',e=>{let p=pointers.get(e.pointerId);if(!p)return;const r=canvas.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top,dx=x-p.x,dy=y-p.y;if(mode==='fluid'){let steps=Math.min(12,Math.max(1,Math.ceil(Math.hypot(dx,dy)/10)));for(let i=1;i<=steps;i++)fluidAt(p.x+dx*i/steps,p.y+dy*i/steps,dx,dy)}if(mode==='bubbles')popAt(x,y);if(mode==='gears'&&dragGear){const a=Math.atan2(y-dragGear.y,x-dragGear.x);let delta=Math.atan2(Math.sin(a-previousAngle),Math.cos(a-previousAngle));spin=Math.max(-.18,Math.min(.18,delta*(dragGear===gears[0]?1:-.55)));for(let i=0;i<gears.length;i++)gears[i].a+=delta*(dragGear===gears[i]?1:dragGear===gears[0]?-1.82:i===0?-.55:1);previousAngle=a}p.x=x;p.y=y});
-function release(e){pointers.delete(e.pointerId);if(!pointers.size)dragGear=null}canvas.addEventListener('pointerup',release);canvas.addEventListener('pointercancel',release);canvas.addEventListener('lostpointercapture',release);
-document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>switchMode(b.dataset.mode));document.querySelectorAll('.color').forEach(b=>b.onclick=()=>{prefs.color=+b.dataset.color;updatePrefs();save();ripple(w/2,h/2)});$('#sound').onclick=()=>{prefs.sound=!prefs.sound;updatePrefs();save();tone(1)};$('#speed').oninput=e=>{prefs.speed=+e.target.value;save()};$('#pause').onclick=()=>{paused=!paused;$('#pause').textContent=paused?'Resume':'Pause';$('#pause').setAttribute('aria-pressed',paused)};$('#helpbtn').onclick=()=>{$('#help').classList.toggle('show');$('#helpbtn').setAttribute('aria-expanded',$('#help').classList.contains('show'))};$('#action').onclick=()=>{if(mode==='stars')repel=!repel;if(mode==='fluid')trails=[];if(mode==='gears'){auto=!auto;spin=.024;$('#action').textContent=auto?'Free spin':'Auto spin'}if(mode==='bubbles'){refill();$('#status').textContent='FRESH LITTLE PLANETS'}updateBadge();render(0)};
-document.querySelectorAll('.pad').forEach(b=>b.addEventListener('click',()=>{let n=+b.dataset.note;tone(n);ripple(w*(.2+n*.2),h*.57,1.4);for(const s of stars){let dx=s.x-w*(.2+n*.2),dy=s.y-h*.57,d=Math.hypot(dx,dy)||1;s.vx+=dx/d*2;s.vy+=dy/d*2}if(mode==='fluid')for(let j=0;j<12;j++)fluidAt(w*(.2+n*.2)+rand(-30,30),h*.55+rand(-30,30));if(mode==='gears')spin=(n%2?-1:1)*.065;b.classList.add('lit');setTimeout(()=>b.classList.remove('lit'),160)}));
-function gear(g,index){ctx.save();ctx.translate(g.x,g.y);ctx.rotate(g.a);ctx.beginPath();for(let i=0;i<g.n*4;i++){let a=i/(g.n*4)*Math.PI*2,r=g.r*(i%4===0||i%4===3?.88:1);let x=Math.cos(a)*r,y=Math.sin(a)*r;i?ctx.lineTo(x,y):ctx.moveTo(x,y)}ctx.closePath();const fill=ctx.createRadialGradient(0,0,g.r*.2,0,0,g.r);fill.addColorStop(0,'#253850');fill.addColorStop(1,'#10202f');ctx.fillStyle=fill;ctx.fill();ctx.strokeStyle=rgba(.8,index?1:0);ctx.lineWidth=2;ctx.shadowColor=rgba(.5);ctx.shadowBlur=12;ctx.stroke();ctx.shadowBlur=0;ctx.strokeStyle='#3e546a';ctx.lineWidth=5;ctx.beginPath();ctx.arc(0,0,g.r*.68,0,Math.PI*2);ctx.stroke();for(let j=0;j<5;j++){ctx.rotate(Math.PI*2/5);ctx.fillStyle='#08111e';ctx.beginPath();ctx.ellipse(g.r*.43,0,g.r*.18,g.r*.08,0,0,Math.PI*2);ctx.fill()}ctx.fillStyle=rgba();ctx.beginPath();ctx.arc(0,0,7,0,Math.PI*2);ctx.fill();ctx.restore()}
-function render(dt){ctx.globalCompositeOperation='source-over';ctx.fillStyle='#050914';ctx.fillRect(0,0,w,h);let bg=ctx.createRadialGradient(w*.5,h*.5,0,w*.5,h*.5,w*.65);bg.addColorStop(0,rgba(.07));bg.addColorStop(1,'transparent');ctx.fillStyle=bg;ctx.fillRect(0,0,w,h);for(const s of dust){ctx.fillStyle=`rgba(210,228,255,${s.a})`;ctx.fillRect(s.x,s.y,s.r,s.r)}let step=dt*60*prefs.speed;
-if(mode==='stars'){ctx.globalCompositeOperation='lighter';for(const s of stars){if(step){for(const p of pointers.values()){let dx=p.x-s.x,dy=p.y-s.y,d=Math.hypot(dx,dy)||1;let force=Math.min(.45,45/(d+15))*(repel?-1:1);s.vx+=dx/d*force*step;s.vy+=dy/d*force*step;if(!repel){s.vx+=-dy/d*.05*step;s.vy+=dx/d*.05*step}}s.vx*=Math.pow(.981,step);s.vy*=Math.pow(.981,step);s.x+=Math.max(-8,Math.min(8,s.vx))*step;s.y+=Math.max(-8,Math.min(8,s.vy))*step;if(s.x<0)s.x=w;if(s.x>w)s.x=0;if(s.y<0)s.y=h;if(s.y>h)s.y=0}ctx.strokeStyle=rgba(.23);ctx.lineWidth=s.r*.7;ctx.beginPath();ctx.moveTo(s.x,s.y);ctx.lineTo(s.x-s.vx*3,s.y-s.vy*3);ctx.stroke();ctx.fillStyle=rgba(.8);ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,Math.PI*2);ctx.fill()}for(const p of pointers.values()){ctx.strokeStyle=rgba(.3);ctx.beginPath();ctx.arc(p.x,p.y,25+Math.sin(time*3)*5,0,Math.PI*2);ctx.stroke()}}
-if(mode==='fluid'){ctx.globalCompositeOperation='lighter';if(!trails.length){for(let i=0;i<3;i++){let x=w*.5+Math.sin(time*.4+i*2.1)*w*.23,y=h*.55+Math.cos(time*.5+i*2)*h*.19;let grad=ctx.createRadialGradient(x,y,0,x,y,65);grad.addColorStop(0,rgba(.18,i%2));grad.addColorStop(1,rgba(0,i%2));ctx.fillStyle=grad;ctx.fillRect(x-65,y-65,130,130)}}for(const p of trails){p.x+=p.vx*step;p.y+=p.vy*step;p.vx+=Math.sin(p.y*.014+time)*.008*step;p.vy+=Math.cos(p.x*.013-time)*.008*step;p.r+=step*.14;p.life-=dt*prefs.speed*.16;if(p.life<=0)continue;let grad=ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,p.r);grad.addColorStop(0,rgba(p.life*.2,p.c));grad.addColorStop(.5,rgba(p.life*.07,p.c));grad.addColorStop(1,rgba(0,p.c));ctx.fillStyle=grad;ctx.fillRect(p.x-p.r,p.y-p.r,p.r*2,p.r*2)}trails=trails.filter(p=>p.life>0)}
-ctx.globalCompositeOperation='source-over';if(mode==='gears'){ctx.strokeStyle=rgba(.1);ctx.lineWidth=1;for(let i=1;i<4;i++){ctx.beginPath();ctx.arc(w*.5,h*.52,gears[0].r+i*21,0,Math.PI*2);ctx.stroke()}if(step&&!dragGear){if(!auto)spin*=Math.pow(.993,step);gears.forEach((g,i)=>g.a+=spin*step*(i?-1.82:1))}gears.forEach(gear)}
-if(mode==='bubbles'){for(const b of bubbles){if(b.popped){b.regrow-=dt*prefs.speed;if(b.regrow<=0)b.popped=false}else b.scale=Math.min(1,b.scale+dt*3);if(b.popped){ctx.strokeStyle='#1d2a40';ctx.beginPath();ctx.arc(b.x,b.y,b.r*.3,0,Math.PI*2);ctx.stroke();continue}let r=Math.max(.01,b.r*b.scale),grad=ctx.createRadialGradient(b.x-r*.3,b.y-r*.4,r*.05,b.x,b.y,r);grad.addColorStop(0,rgba(.65));grad.addColorStop(.3,rgba(.18));grad.addColorStop(.8,'#11283b');grad.addColorStop(1,rgba(.35));ctx.fillStyle=grad;ctx.beginPath();ctx.arc(b.x,b.y,r,0,Math.PI*2);ctx.fill();ctx.strokeStyle=rgba(.55);ctx.stroke();ctx.fillStyle='#ffffffaa';ctx.beginPath();ctx.ellipse(b.x-r*.3,b.y-r*.35,r*.2,r*.09,-.7,0,Math.PI*2);ctx.fill()}}
-for(const r of ripples){r.r+=step*(2.5+r.power);r.a-=dt*.7;ctx.strokeStyle=rgba(Math.max(0,r.a)*.6);ctx.lineWidth=2;ctx.beginPath();ctx.arc(r.x,r.y,r.r,0,Math.PI*2);ctx.stroke()}ripples=ripples.filter(r=>r.a>0)}
-function frame(t){let dt=last?Math.min(.034,(t-last)/1000):0;last=t;if(!paused&&!document.hidden){time+=dt*prefs.speed;render(dt)}else if(paused&&pointers.size)render(0);requestAnimationFrame(frame)}document.addEventListener('visibilitychange',()=>{last=0;if(document.hidden){pointers.clear();dragGear=null}});requestAnimationFrame(frame);
-</script></body></html>
+const $ = s => document.querySelector(s);
+const canvas = $('#scene');
+const ctx = canvas.getContext('2d', { alpha: false });
+const palettes = [[131,245,219],[179,160,255],[255,155,183],[255,199,121]];
+let prefs = { color: 0, speed: 1, sound: false, mode: 'stars' };
+try { Object.assign(prefs, JSON.parse(localStorage.getItem('space-fidget-v2') || '{}')); } catch (e) {}
+prefs.color = Number.isInteger(prefs.color) && prefs.color >= 0 && prefs.color < 4 ? prefs.color : 0;
+prefs.speed = Math.min(2, Math.max(0.2, +prefs.speed || 1));
+prefs.sound = !!prefs.sound;
+if (!['stars','fluid','gears','bubbles'].includes(prefs.mode)) prefs.mode = 'stars';
+
+let mode = prefs.mode, w = 600, h = 400, dpr = 1, paused = false, repel = false;
+let time = 0, last = 0, stars = [], dust = [], far = [], trails = [], ripples = [], sparks = [];
+let bubbles = [], gears = [], spin = 0.006, pops = 0, auto = false, audio = null;
+let dragGear = null, previousAngle = 0;
+const pointers = new Map();
+const rand = (a, b) => a + Math.random() * (b - a);
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const rgba = (a = 1, offset = 0) => {
+  const c = palettes[(prefs.color + offset) % 4];
+  return `rgba(${c[0]},${c[1]},${c[2]},${a})`;
+};
+function save() {
+  prefs.mode = mode;
+  try { localStorage.setItem('space-fidget-v2', JSON.stringify(prefs)); } catch (e) {}
+}
+function buzz(ms = 12) {
+  try { if (navigator.vibrate) navigator.vibrate(ms); } catch (e) {}
+}
+function updatePrefs() {
+  document.documentElement.style.setProperty('--accent', rgba());
+  const sound = $('#sound');
+  sound.textContent = prefs.sound ? 'Sound on' : 'Sound off';
+  sound.classList.toggle('on', prefs.sound);
+  sound.setAttribute('aria-pressed', prefs.sound);
+  $('#speed').value = prefs.speed;
+  document.querySelectorAll('.color').forEach(b => b.classList.toggle('active', +b.dataset.color === prefs.color));
+}
+updatePrefs();
+
+function tone(kind = 1) {
+  if (!prefs.sound) return;
+  try {
+    if (!audio) audio = new (window.AudioContext || window.webkitAudioContext)();
+    if (audio.state === 'suspended') audio.resume();
+    const now = audio.currentTime;
+    const o = audio.createOscillator();
+    const o2 = audio.createOscillator();
+    const g = audio.createGain();
+    const f = audio.createBiquadFilter();
+    o.connect(f); o2.connect(f); f.connect(g); g.connect(audio.destination);
+    f.type = 'lowpass';
+    f.frequency.value = kind === 0 ? 420 : 2400;
+    o.type = kind === 3 ? 'triangle' : kind === 2 ? 'sawtooth' : 'sine';
+    o2.type = 'sine';
+    const base = [72, 523.25, 196, 988][kind];
+    o.frequency.setValueAtTime(base, now);
+    o.frequency.exponentialRampToValueAtTime(kind === 0 ? 34 : kind === 3 ? 180 : base * 0.72, now + 0.28);
+    o2.frequency.setValueAtTime(base * 1.5, now);
+    o2.frequency.exponentialRampToValueAtTime(base * 0.9, now + 0.2);
+    g.gain.setValueAtTime(0.0001, now);
+    g.gain.exponentialRampToValueAtTime(kind === 2 ? 0.07 : 0.12, now + 0.012);
+    g.gain.exponentialRampToValueAtTime(0.0001, now + (kind === 1 ? 0.9 : 0.34));
+    o.start(now); o2.start(now); o.stop(now + 0.95); o2.stop(now + 0.95);
+  } catch (e) {}
+}
+function ripple(x, y, power = 1) {
+  ripples.push({ x, y, r: 4, a: 1, power });
+  if (ripples.length > 24) ripples.shift();
+}
+function burst(x, y, n = 10, speed = 2.2) {
+  for (let i = 0; i < n; i++) {
+    const a = rand(0, Math.PI * 2);
+    const v = rand(0.4, speed);
+    sparks.push({ x, y, vx: Math.cos(a) * v, vy: Math.sin(a) * v, life: 1, r: rand(1.2, 2.6) });
+  }
+  if (sparks.length > 220) sparks.splice(0, sparks.length - 220);
+}
+function initialize() {
+  dust = Array.from({ length: 70 }, () => ({ x: Math.random() * w, y: Math.random() * h, r: rand(0.4, 1.4), a: rand(0.12, 0.55), tw: rand(0, 6) }));
+  far = Array.from({ length: 36 }, () => ({ x: Math.random() * w, y: Math.random() * h, r: rand(0.6, 1.8), a: rand(0.25, 0.8), tw: rand(0, 8) }));
+  stars = Array.from({ length: 180 }, () => ({
+    x: Math.random() * w, y: Math.random() * h,
+    vx: rand(-0.25, 0.25), vy: rand(-0.25, 0.25),
+    r: rand(0.9, 2.4)
+  }));
+  const R = Math.min(w * 0.2, h * 0.22);
+  gears = [
+    { x: w * 0.5, y: h * 0.54, r: R, n: 18, a: 0.2 },
+    { x: w * 0.5 - R * 1.62, y: h * 0.54 + 18, r: R * 0.58, n: 11, a: 0 },
+    { x: w * 0.5 + R * 1.62, y: h * 0.54 - 16, r: R * 0.58, n: 11, a: 0.4 }
+  ];
+  refill();
+  trails = [];
+  ripples = [];
+  sparks = [];
+}
+function refill() {
+  bubbles = [];
+  const gap = w < 500 ? 46 : 56;
+  const cols = Math.max(3, Math.floor((w - 36) / gap));
+  const rows = Math.max(2, Math.floor((h - 140) / gap));
+  for (let j = 0; j < rows; j++) {
+    for (let i = 0; i < cols; i++) {
+      bubbles.push({
+        x: (w - (cols - 1) * gap) / 2 + i * gap,
+        y: 100 + j * gap,
+        r: gap * 0.36,
+        popped: false, regrow: 0, scale: 1,
+        hue: (i + j) % 2
+      });
+    }
+  }
+  pops = 0;
+}
+function resize() {
+  const r = canvas.getBoundingClientRect();
+  w = r.width; h = r.height;
+  dpr = Math.min(2, window.devicePixelRatio || 1);
+  canvas.width = Math.round(w * dpr);
+  canvas.height = Math.round(h * dpr);
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  initialize();
+  render(0);
+}
+new ResizeObserver(resize).observe(canvas);
+
+const descriptions = {
+  stars: ['Gather a constellation', 'Touch and drag. Nearby stars link into lines.', 'Repel ⇄'],
+  fluid: ['Pour a little universe', 'Drag slowly. Ink keeps drifting after you lift.', 'Clear trails'],
+  gears: ['Spin the orbit engine', 'Drag around a gear to wind it, then release.', 'Auto spin'],
+  bubbles: ['A pocket of tiny planets', 'Tap or sweep to pop. They grow back.', 'Refill']
+};
+function switchMode(next) {
+  mode = next;
+  pointers.clear();
+  dragGear = null;
+  const d = descriptions[mode];
+  $('#title').textContent = d[0];
+  $('#hint').textContent = d[1];
+  $('#action').textContent = mode === 'gears' && auto ? 'Free spin' : d[2];
+  $('#status').textContent = 'NO GOAL. JUST PLAY.';
+  document.querySelectorAll('.tab').forEach(b => {
+    const selected = b.dataset.mode === mode;
+    b.classList.toggle('active', selected);
+    b.setAttribute('aria-pressed', selected);
+  });
+  updateBadge();
+  save();
+  render(0);
+}
+function updateBadge() {
+  $('#badge').textContent = mode === 'stars' ? (repel ? 'REPEL' : 'ATTRACT')
+    : mode === 'fluid' ? 'FLOW'
+    : mode === 'gears' ? (auto ? 'AUTO' : 'FREE SPIN')
+    : 'POP & REFILL';
+}
+function fluidAt(x, y, dx = 0, dy = 0) {
+  for (let i = 0; i < 6; i++) {
+    trails.push({
+      x: x + rand(-8, 8), y: y + rand(-8, 8),
+      vx: dx * 0.05 + rand(-0.55, 0.55),
+      vy: dy * 0.05 + rand(-0.55, 0.55),
+      r: rand(10, 26), life: 1, c: Math.random() > 0.55 ? 1 : 0
+    });
+  }
+  if (trails.length > 700) trails.splice(0, trails.length - 700);
+}
+function popAt(x, y) {
+  let hit = false;
+  for (const b of bubbles) {
+    if (!b.popped && Math.hypot(x - b.x, y - b.y) < b.r + 8) {
+      b.popped = true;
+      b.regrow = 2.4;
+      b.scale = 0;
+      ripple(b.x, b.y, 0.45);
+      burst(b.x, b.y, 12, 2.6);
+      pops++;
+      hit = true;
+    }
+  }
+  if (hit) {
+    tone(3);
+    buzz(8);
+    $('#status').textContent = pops + ' LITTLE PLANETS POPPED';
+  }
+}
+
+canvas.addEventListener('pointerdown', e => {
+  e.preventDefault();
+  canvas.setPointerCapture(e.pointerId);
+  const r = canvas.getBoundingClientRect();
+  const p = { x: e.clientX - r.left, y: e.clientY - r.top };
+  pointers.set(e.pointerId, p);
+  if (mode === 'bubbles') popAt(p.x, p.y);
+  else if (mode === 'fluid') fluidAt(p.x, p.y);
+  else if (mode === 'gears') {
+    dragGear = gears.find(g => Math.hypot(p.x - g.x, p.y - g.y) < g.r + 22) || gears[0];
+    previousAngle = Math.atan2(p.y - dragGear.y, p.x - dragGear.x);
+    auto = false;
+    updateBadge();
+    $('#action').textContent = 'Auto spin';
+  } else ripple(p.x, p.y, 0.45);
+});
+canvas.addEventListener('pointermove', e => {
+  const p = pointers.get(e.pointerId);
+  if (!p) return;
+  const r = canvas.getBoundingClientRect();
+  const x = e.clientX - r.left, y = e.clientY - r.top;
+  const dx = x - p.x, dy = y - p.y;
+  if (mode === 'fluid') {
+    const steps = Math.min(10, Math.max(1, Math.ceil(Math.hypot(dx, dy) / 12)));
+    for (let i = 1; i <= steps; i++) fluidAt(p.x + dx * i / steps, p.y + dy * i / steps, dx, dy);
+  }
+  if (mode === 'bubbles') popAt(x, y);
+  if (mode === 'gears' && dragGear) {
+    const a = Math.atan2(y - dragGear.y, x - dragGear.x);
+    const delta = Math.atan2(Math.sin(a - previousAngle), Math.cos(a - previousAngle));
+    spin = clamp(delta * (dragGear === gears[0] ? 1 : -0.55), -0.16, 0.16);
+    for (let i = 0; i < gears.length; i++) {
+      const sign = dragGear === gears[i] ? 1 : (dragGear === gears[0] ? -1.72 : (i === 0 ? -0.58 : 1));
+      gears[i].a += delta * sign;
+    }
+    previousAngle = a;
+  }
+  p.x = x; p.y = y;
+});
+function release(e) { pointers.delete(e.pointerId); if (!pointers.size) dragGear = null; }
+canvas.addEventListener('pointerup', release);
+canvas.addEventListener('pointercancel', release);
+canvas.addEventListener('lostpointercapture', release);
+
+document.querySelectorAll('.tab').forEach(b => b.onclick = () => switchMode(b.dataset.mode));
+document.querySelectorAll('.color').forEach(b => b.onclick = () => {
+  prefs.color = +b.dataset.color;
+  updatePrefs(); save();
+  ripple(w / 2, h / 2);
+});
+$('#sound').onclick = () => { prefs.sound = !prefs.sound; updatePrefs(); save(); tone(1); };
+$('#speed').oninput = e => { prefs.speed = +e.target.value; save(); };
+$('#pause').onclick = () => {
+  paused = !paused;
+  $('#pause').textContent = paused ? 'Resume' : 'Pause';
+  $('#pause').setAttribute('aria-pressed', paused);
+};
+$('#helpbtn').onclick = () => {
+  $('#help').classList.toggle('show');
+  $('#helpbtn').setAttribute('aria-expanded', $('#help').classList.contains('show'));
+};
+$('#action').onclick = () => {
+  if (mode === 'stars') repel = !repel;
+  if (mode === 'fluid') trails = [];
+  if (mode === 'gears') {
+    auto = !auto;
+    spin = 0.022;
+    $('#action').textContent = auto ? 'Free spin' : 'Auto spin';
+  }
+  if (mode === 'bubbles') { refill(); $('#status').textContent = 'FRESH LITTLE PLANETS'; }
+  updateBadge();
+  render(0);
+};
+document.querySelectorAll('.pad').forEach(b => b.addEventListener('click', () => {
+  const n = +b.dataset.note;
+  tone(n);
+  buzz(10 + n * 4);
+  const px = w * (0.18 + n * 0.21), py = h * 0.56;
+  ripple(px, py, 1.5);
+  burst(px, py, 14, 3);
+  for (const s of stars) {
+    const dx = s.x - px, dy = s.y - py, d = Math.hypot(dx, dy) || 1;
+    s.vx += dx / d * 2.2;
+    s.vy += dy / d * 2.2;
+  }
+  if (mode === 'fluid') for (let j = 0; j < 16; j++) fluidAt(px + rand(-36, 36), py + rand(-28, 28));
+  if (mode === 'gears') spin = (n % 2 ? -1 : 1) * 0.07;
+  b.classList.add('lit');
+  setTimeout(() => b.classList.remove('lit'), 160);
+}));
+
+function drawSky() {
+  ctx.globalCompositeOperation = 'source-over';
+  ctx.fillStyle = '#050914';
+  ctx.fillRect(0, 0, w, h);
+  const bg = ctx.createRadialGradient(w * 0.5, h * 0.48, 0, w * 0.5, h * 0.5, w * 0.72);
+  bg.addColorStop(0, rgba(0.09));
+  bg.addColorStop(0.45, rgba(0.03, 1));
+  bg.addColorStop(1, 'transparent');
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, w, h);
+  for (const s of far) {
+    const tw = 0.55 + Math.sin(time * 1.4 + s.tw) * 0.45;
+    ctx.fillStyle = `rgba(226,236,255,${s.a * tw})`;
+    ctx.beginPath();
+    ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  for (const s of dust) {
+    ctx.fillStyle = `rgba(190,210,235,${s.a * (0.7 + Math.sin(time * 2 + s.tw) * 0.3)})`;
+    ctx.fillRect(s.x, s.y, s.r, s.r);
+  }
+}
+function gear(g, index) {
+  ctx.save();
+  ctx.translate(g.x, g.y);
+  ctx.rotate(g.a);
+  ctx.beginPath();
+  const teeth = g.n;
+  for (let i = 0; i < teeth; i++) {
+    const a0 = (i / teeth) * Math.PI * 2;
+    const a1 = ((i + 0.34) / teeth) * Math.PI * 2;
+    const a2 = ((i + 0.66) / teeth) * Math.PI * 2;
+    const a3 = ((i + 1) / teeth) * Math.PI * 2;
+    const outer = g.r, inner = g.r * 0.84;
+    if (i === 0) ctx.moveTo(Math.cos(a0) * inner, Math.sin(a0) * inner);
+    ctx.lineTo(Math.cos(a1) * outer, Math.sin(a1) * outer);
+    ctx.lineTo(Math.cos(a2) * outer, Math.sin(a2) * outer);
+    ctx.lineTo(Math.cos(a3) * inner, Math.sin(a3) * inner);
+  }
+  ctx.closePath();
+  const fill = ctx.createRadialGradient(-g.r * 0.2, -g.r * 0.25, g.r * 0.1, 0, 0, g.r);
+  fill.addColorStop(0, '#314864');
+  fill.addColorStop(0.55, '#1a2a40');
+  fill.addColorStop(1, '#0c1724');
+  ctx.fillStyle = fill;
+  ctx.fill();
+  ctx.strokeStyle = rgba(0.85, index ? 1 : 0);
+  ctx.lineWidth = 1.6;
+  ctx.shadowColor = rgba(0.55);
+  ctx.shadowBlur = 14;
+  ctx.stroke();
+  ctx.shadowBlur = 0;
+  ctx.strokeStyle = '#465c78';
+  ctx.lineWidth = 5;
+  ctx.beginPath();
+  ctx.arc(0, 0, g.r * 0.62, 0, Math.PI * 2);
+  ctx.stroke();
+  ctx.strokeStyle = '#1b2838';
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.arc(0, 0, g.r * 0.46, 0, Math.PI * 2);
+  ctx.stroke();
+  for (let j = 0; j < 5; j++) {
+    ctx.rotate(Math.PI * 2 / 5);
+    ctx.fillStyle = '#071018';
+    ctx.beginPath();
+    ctx.ellipse(g.r * 0.4, 0, g.r * 0.13, g.r * 0.055, 0, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  ctx.fillStyle = rgba();
+  ctx.beginPath();
+  ctx.arc(0, 0, 6.5, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = '#ffffffcc';
+  ctx.beginPath();
+  ctx.arc(-1.5, -1.5, 2, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+}
+function render(dt) {
+  drawSky();
+  const step = dt * 60 * prefs.speed;
+
+  if (mode === 'stars') {
+    if (step) {
+      for (const s of stars) {
+        for (const p of pointers.values()) {
+          const dx = p.x - s.x, dy = p.y - s.y, d = Math.hypot(dx, dy) || 1;
+          const force = Math.min(0.42, 52 / (d + 18)) * (repel ? -1 : 1);
+          s.vx += (dx / d) * force * step;
+          s.vy += (dy / d) * force * step;
+          if (!repel && d < 160) {
+            s.vx += (-dy / d) * 0.045 * step;
+            s.vy += (dx / d) * 0.045 * step;
+          }
+        }
+        s.vx *= Math.pow(0.984, step);
+        s.vy *= Math.pow(0.984, step);
+        s.x += clamp(s.vx, -7, 7) * step;
+        s.y += clamp(s.vy, -7, 7) * step;
+        if (s.x < 0) s.x += w; if (s.x > w) s.x -= w;
+        if (s.y < 0) s.y += h; if (s.y > h) s.y -= h;
+      }
+    }
+    ctx.globalCompositeOperation = 'lighter';
+    const link = Math.min(78, w * 0.11);
+    ctx.lineWidth = 1;
+    for (let i = 0; i < stars.length; i += 2) {
+      const a = stars[i];
+      for (let j = i + 2; j < stars.length; j += 3) {
+        const b = stars[j];
+        const dx = a.x - b.x, dy = a.y - b.y;
+        if (Math.abs(dx) > link || Math.abs(dy) > link) continue;
+        const d = Math.hypot(dx, dy);
+        if (d < link) {
+          ctx.strokeStyle = rgba((1 - d / link) * 0.28);
+          ctx.beginPath();
+          ctx.moveTo(a.x, a.y);
+          ctx.lineTo(b.x, b.y);
+          ctx.stroke();
+        }
+      }
+    }
+    for (const s of stars) {
+      ctx.strokeStyle = rgba(0.22);
+      ctx.lineWidth = s.r * 0.7;
+      ctx.beginPath();
+      ctx.moveTo(s.x, s.y);
+      ctx.lineTo(s.x - s.vx * 2.4, s.y - s.vy * 2.4);
+      ctx.stroke();
+      ctx.fillStyle = rgba(0.9);
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    for (const p of pointers.values()) {
+      ctx.strokeStyle = rgba(0.45);
+      ctx.lineWidth = 1.4;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, 22 + Math.sin(time * 3) * 4, 0, Math.PI * 2);
+      ctx.stroke();
+    }
+  }
+
+  if (mode === 'fluid') {
+    ctx.globalCompositeOperation = 'lighter';
+    if (!trails.length) {
+      for (let i = 0; i < 3; i++) {
+        const x = w * 0.5 + Math.sin(time * 0.35 + i * 2.1) * w * 0.22;
+        const y = h * 0.55 + Math.cos(time * 0.42 + i * 2) * h * 0.16;
+        const grad = ctx.createRadialGradient(x, y, 0, x, y, 80);
+        grad.addColorStop(0, rgba(0.16, i % 2));
+        grad.addColorStop(1, rgba(0, i % 2));
+        ctx.fillStyle = grad;
+        ctx.fillRect(x - 80, y - 80, 160, 160);
+      }
+    }
+    for (const p of trails) {
+      p.x += p.vx * step;
+      p.y += p.vy * step;
+      p.vx += Math.sin(p.y * 0.012 + time) * 0.01 * step;
+      p.vy += Math.cos(p.x * 0.011 - time) * 0.01 * step;
+      p.vx *= Math.pow(0.992, step);
+      p.vy *= Math.pow(0.992, step);
+      p.r += step * 0.12;
+      p.life -= dt * prefs.speed * 0.13;
+      if (p.life <= 0) continue;
+      const grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r);
+      grad.addColorStop(0, rgba(p.life * 0.22, p.c));
+      grad.addColorStop(0.45, rgba(p.life * 0.08, p.c));
+      grad.addColorStop(1, rgba(0, p.c));
+      ctx.fillStyle = grad;
+      ctx.fillRect(p.x - p.r, p.y - p.r, p.r * 2, p.r * 2);
+    }
+    trails = trails.filter(p => p.life > 0);
+  }
+
+  ctx.globalCompositeOperation = 'source-over';
+  if (mode === 'gears') {
+    ctx.strokeStyle = rgba(0.12);
+    ctx.lineWidth = 1;
+    for (let i = 1; i < 4; i++) {
+      ctx.beginPath();
+      ctx.arc(w * 0.5, h * 0.54, gears[0].r + i * 22, 0, Math.PI * 2);
+      ctx.stroke();
+    }
+    if (step && !dragGear) {
+      if (!auto) spin *= Math.pow(0.992, step);
+      gears.forEach((g, i) => { g.a += spin * step * (i ? -1.72 : 1); });
+    }
+    gears.forEach(gear);
+    if (dragGear) {
+      ctx.strokeStyle = rgba(0.35);
+      ctx.setLineDash([4, 6]);
+      ctx.beginPath();
+      ctx.arc(dragGear.x, dragGear.y, dragGear.r + 14, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.setLineDash([]);
+    }
+  }
+
+  if (mode === 'bubbles') {
+    for (const b of bubbles) {
+      if (b.popped) {
+        b.regrow -= dt * prefs.speed;
+        if (b.regrow <= 0) { b.popped = false; b.scale = 0.15; }
+      } else b.scale = Math.min(1, b.scale + dt * 2.4);
+      if (b.popped) {
+        ctx.strokeStyle = '#1d2a40';
+        ctx.beginPath();
+        ctx.arc(b.x, b.y, b.r * 0.28, 0, Math.PI * 2);
+        ctx.stroke();
+        continue;
+      }
+      const r = Math.max(0.01, b.r * b.scale);
+      const bob = Math.sin(time * 1.6 + b.x * 0.02) * 1.4;
+      const grad = ctx.createRadialGradient(b.x - r * 0.32, b.y - r * 0.38 + bob, r * 0.05, b.x, b.y + bob, r);
+      grad.addColorStop(0, rgba(0.7, b.hue));
+      grad.addColorStop(0.28, rgba(0.18, b.hue));
+      grad.addColorStop(0.78, '#10283c');
+      grad.addColorStop(1, rgba(0.4, b.hue));
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.arc(b.x, b.y + bob, r, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = rgba(0.55, b.hue);
+      ctx.lineWidth = 1.2;
+      ctx.stroke();
+      ctx.fillStyle = '#ffffffb0';
+      ctx.beginPath();
+      ctx.ellipse(b.x - r * 0.28, b.y - r * 0.32 + bob, r * 0.18, r * 0.08, -0.7, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+
+  ctx.globalCompositeOperation = 'lighter';
+  for (const s of sparks) {
+    s.x += s.vx * step;
+    s.y += s.vy * step;
+    s.vy += 0.012 * step;
+    s.life -= dt * 1.3;
+    if (s.life <= 0) continue;
+    ctx.fillStyle = rgba(s.life);
+    ctx.beginPath();
+    ctx.arc(s.x, s.y, s.r * s.life, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  sparks = sparks.filter(s => s.life > 0);
+  for (const r of ripples) {
+    r.r += step * (2.4 + r.power);
+    r.a -= dt * 0.65;
+    ctx.strokeStyle = rgba(Math.max(0, r.a) * 0.55);
+    ctx.lineWidth = 1.6;
+    ctx.beginPath();
+    ctx.arc(r.x, r.y, r.r, 0, Math.PI * 2);
+    ctx.stroke();
+  }
+  ripples = ripples.filter(r => r.a > 0);
+  ctx.globalCompositeOperation = 'source-over';
+}
+function frame(t) {
+  const dt = last ? Math.min(0.034, (t - last) / 1000) : 0;
+  last = t;
+  if (!paused && !document.hidden) {
+    time += dt * prefs.speed;
+    render(dt);
+  } else if (paused && pointers.size) render(0);
+  requestAnimationFrame(frame);
+}
+document.addEventListener('visibilitychange', () => {
+  last = 0;
+  if (document.hidden) { pointers.clear(); dragGear = null; }
+});
+switchMode(mode);
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>
